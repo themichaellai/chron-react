@@ -5,7 +5,11 @@ var sectionIdsCursor = store.select('models', 'sectionIds');
 var { rawDataToPost } = require('../utils/Post');
 
 var urlBuilder = (sectionName) => {
-  return `http://www.dukechronicle.com/section/${sectionName}.json`;
+    if (sectionName !== 'frontpage') {
+	return `http://www.dukechronicle.com/section/${sectionName}.json`;
+    } else {
+	return 'http://www.dukechronicle.com/.json';
+    }	
 }
 
 var getSection = (section) => {
@@ -27,7 +31,7 @@ var getSection = (section) => {
 
 var PostActionCreators = {
   getFrontpage: () => {
-    getSection('news');
+    getSection('frontpage');
   },
   getSection: (section) => {
     getSection(section);

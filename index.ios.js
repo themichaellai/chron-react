@@ -60,7 +60,7 @@ var chronreact = React.createClass({
           <NavigatorIOS
             style={styles.container}
             initialRoute={{
-              title: 'News',
+              title: 'Frontpage',
               component: Frontpage
             }}
           />

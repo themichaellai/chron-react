@@ -7,7 +7,7 @@ var Frontpage = React.createClass({
   render: function() {
     var section = {
       name: 'Frontpage',
-      slug: 'news',
+      slug: 'frontpage',
     };
     return (
       <SectionPostListing
