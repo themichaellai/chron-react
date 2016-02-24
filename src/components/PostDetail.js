@@ -36,8 +36,8 @@ const innerStyles = (fullWidth) => {
     margin-left: ${-gutterWidth}px;
   }
   body {
-    font-family: 'Helvetica';
-    font-size: 12px;
+    font-family: 'Times';
+    font-size: 18px;
     margin-left: 0;
     margin-right: 0;
     padding-left: ${gutterWidth}px;
