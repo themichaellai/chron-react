@@ -30,10 +30,13 @@ const innerStyles = (fullWidth) => {
   }
   #image {
     flex: 1;
-    width: ${fullWidth}px;
+    max-width: ${fullWidth}px;
     margin-top: 15px;
     margin-bottom: 5px;
     margin-left: ${-gutterWidth}px;
+  }
+  img {
+    max-width: ${fullWidth - 2*gutterWidth}px;
   }
   body {
     font-family: 'Helvetica';

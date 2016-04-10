@@ -8,13 +8,16 @@
  */
 
 #import "AppDelegate.h"
-
+@import Batch;
+#import "RCTLinkingManager.h"
+#import "RCTPushNotificationManager.h"
 #import "RCTRootView.h"
 
 @implementation AppDelegate
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
+  [BatchPush enableAutomaticDeeplinkHandling:NO];
   NSURL *jsCodeLocation;
 
   /**
@@ -40,10 +43,18 @@
    */
 
 //   jsCodeLocation = [[NSBundle mainBundle] URLForResource:@"main" withExtension:@"jsbundle"];
+  NSDictionary *remoteNotif = [launchOptions objectForKey: UIApplicationLaunchOptionsRemoteNotificationKey];
 
+  //Accept push notification when app is not open
+  NSDictionary *pushProps = nil;
+  if (remoteNotif) {
+    NSString *deeplink = [BatchPush deeplinkFromUserInfo:remoteNotif];
+    pushProps = @{@"pushNotification" : deeplink};
+  }
+  
   RCTRootView *rootView = [[RCTRootView alloc] initWithBundleURL:jsCodeLocation
                                                       moduleName:@"chronreact"
-                                               initialProperties:nil
+                                               initialProperties:pushProps
                                                    launchOptions:launchOptions];
 
   self.window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
@@ -53,5 +64,35 @@
   [self.window makeKeyAndVisible];
   return YES;
 }
+
+- (BOOL)application:(UIApplication *)application openURL:(NSURL *)url
+  sourceApplication:(NSString *)sourceApplication annotation:(id)annotation
+{
+  return [RCTLinkingManager application:application openURL:url
+                      sourceApplication:sourceApplication annotation:annotation];
+}
+
+ // Required to register for notifications
+ - (void)application:(UIApplication *)application didRegisterUserNotificationSettings:(UIUserNotificationSettings *)notificationSettings
+ {
+  [RCTPushNotificationManager didRegisterUserNotificationSettings:notificationSettings];
+ }
+ // Required for the register event.
+ - (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken
+ {
+  [RCTPushNotificationManager didRegisterForRemoteNotificationsWithDeviceToken:deviceToken];
+ }
+ // Required for the notification event.
+ - (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)notification
+ {
+   NSString *deeplink = [BatchPush deeplinkFromUserInfo:notification];
+   NSDictionary *pushProps = @{@"pushNotification" : deeplink};
+  [RCTPushNotificationManager didReceiveRemoteNotification:pushProps];
+ }
+ // Required for the localNotification event.
+ - (void)application:(UIApplication *)application didReceiveLocalNotification:(UILocalNotification *)notification
+ {
+  [RCTPushNotificationManager didReceiveLocalNotification:notification];
+ }
 
 @end

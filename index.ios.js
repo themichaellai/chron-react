@@ -68,31 +68,49 @@ const chronreact = React.createClass({
   componentDidMount() {
     tabCursor.on('change', this.updateTab);
     StatusBarIOS.setStyle('light-content');
+    Linking.addEventListener('url', this._handleOpenURL);
+
+    const url = this.props.pushNotification;
+    if (!(_.isUndefined(url) || _.isNull(url))) {
+      const slug = url.replace(/dukechronicle:\/\//, '')
+        .replace(/\/article\//, '');
+      this.openPost(slug);
+    }
 
     Linking.getInitialURL().then((url) => {
       if (!_.isNull(url)) {
-        const slug = url.replace(/dukechronicle:\/\//, '');
+        const slug = url.replace(/dukechronicle:\/\//, '')
+          .replace(/\/article\//, '');
         this.openPost(slug);
       }
     });
-
     registerPushIOS();
     PushNotificationIOS.addEventListener('notification', this.onNotification);
   },
 
   componentWillUnmount() {
     tabCursor.off('change', this.updateTab);
+    Linking.removeEventListener('url', this._handleOpenURL);
+    PushNotificationIOS.removeEventListener('notification', this.onNotification);
+  },
+
+  _handleOpenURL(e) {
+    const url = e.url;
+    if (!_.isNull(url)) {
+      const slug = url.replace(/dukechronicle:\/\//, '')
+        .replace(/\/article\//, '');
+      this.openPost(slug);
+    }
   },
 
   /*
    * Expects notification object to have a '_data' key that maps to an object,
-   * which should have 'postUrl' as a key, which should map to a full url.
+   * which should have 'pushNotification' as a key, which should map to a full url.
    */
   onNotification(notification) {
-    const url = notification._data.postUrl;
-    if (!_.isUndefined(url)) {
-      const slug = (new URL(url))
-        .pathname
+    const url = notification._data.pushNotification;
+    if (!(_.isUndefined(url) || _.isNull(url))) {
+      const slug = url.replace(/dukechronicle:\/\//, '')
         .replace(/\/article\//, '');
       this.openPost(slug);
     }
