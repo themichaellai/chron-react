@@ -2,6 +2,7 @@ import React from 'react';
 import {
   StyleSheet,
   View,
+  Platform,
   WebView,
 } from 'react-native';
 const _ = require('underscore');
@@ -14,7 +15,12 @@ const paragraphAd = require('../../config/ad.json')['300x250'];
 const styles = StyleSheet.create({
   container: {
     marginTop: 50,
-    marginBottom: 27,
+    ...Platform.select({
+      ios: {
+        marginBottom: 27,
+      },
+      android: {},
+    }),
     flex: 1,
     flexDirection: 'column',
     justifyContent: 'center',

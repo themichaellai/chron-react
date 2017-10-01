@@ -6,12 +6,11 @@ import {
 
 const styles = StyleSheet.create({
   navBarText: {
-    fontSize: 16,
-    marginVertical: 10,
+    fontSize: 20,
+    marginVertical: 12,
   },
   navBarTitleText: {
     color: '#f8f8f8',
-    fontWeight: '500',
   },
 });
 

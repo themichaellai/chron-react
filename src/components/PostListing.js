@@ -4,6 +4,7 @@ import {
   ListView,
   ActivityIndicator,
   RefreshControl,
+  Platform,
   View,
 } from 'react-native';
 
@@ -66,10 +67,15 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   listView: {
-    paddingLeft: 15,
-    paddingRight: 15,
-    marginTop: 64,
-    marginBottom: 44,
+    ...Platform.select({
+      ios: {
+        paddingLeft: 15,
+        paddingRight: 15,
+        marginTop: 64,
+        marginBottom: 44,
+      },
+      android: {},
+    }),
   },
   footer: {
     paddingTop: 12,

@@ -6,45 +6,86 @@
 import React from 'react';
 import {
   AppRegistry,
+  Navigator,
+  DrawerLayoutAndroid,
+  StatusBar,
   StyleSheet,
-  Text,
-  View,
 } from 'react-native';
-
+import TabView from './src/TabView.android';
+import Sidebar from './src/Sidebar.android';
+import { NavigationBarRouteMapper } from './src/NavigationBarRouteMapper.android';
 
 const styles = StyleSheet.create({
-  container: {
+  navBar: {
+    backgroundColor: '#083e8c',
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#F5FCFF',
-  },
-  welcome: {
-    fontSize: 20,
-    textAlign: 'center',
-    margin: 10,
-  },
-  instructions: {
-    textAlign: 'center',
-    color: '#333333',
-    marginBottom: 5,
+    flexDirection: 'row',
   },
 });
 
 const chronreact = React.createClass({
-  render: function() {
+
+  componentDidMount() {
+    StatusBar.setBackgroundColor('#000B59');
+  },
+
+  _renderScene(route, navigator) {
     return (
-      <View style={styles.container}>
-        <Text style={styles.welcome}>
-          Welcome to React Native!
-        </Text>
-        <Text style={styles.instructions}>
-          To get started, edit index.android.js
-        </Text>
-        <Text style={styles.instructions}>
-          Shake or press menu button for dev menu
-        </Text>
-      </View>
+      <route.component
+        navigator={navigator}
+        {...route.passProps} />
+    );
+  },
+
+  _renderNavigationBar() {
+    return (
+      <Navigator.NavigationBar
+        routeMapper={NavigationBarRouteMapper}
+        style={styles.navBar}
+      />
+    );
+  },
+
+  openDrawer() {
+    this.refs.drawer.openDrawer();
+  },
+
+  closeDrawer() {
+    this.refs.drawer.closeDrawer();
+  },
+
+  replaceRoute(route) {
+    this.refs.navigator.replace(route);
+  },
+
+  render() {
+    return (
+      <DrawerLayoutAndroid
+        drawerWidth={300}
+        ref="drawer"
+        drawerPosition={DrawerLayoutAndroid.positions.Left}
+        renderNavigationView={() => (
+          <Sidebar
+            replaceRoute={this.replaceRoute}
+            closeDrawer={this.closeDrawer}
+            openDrawer={this.openDrawer}
+          />
+        )}>
+        <Navigator
+          ref="navigator"
+          initialRoute={{
+            title: 'The Chronicle',
+            component: TabView,
+            titleStyleOverride: {
+              fontFamily: 'Didot',
+              fontSize: 25,
+            },
+            passProps: { openDrawer: this.openDrawer },
+          }}
+          renderScene={this._renderScene}
+          navigationBar={this._renderNavigationBar()}
+        />
+      </DrawerLayoutAndroid>
     );
   },
 });
